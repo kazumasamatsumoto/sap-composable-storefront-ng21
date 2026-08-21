@@ -4,6 +4,7 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 
+import { provideComponentBadges } from './custom/all-components/component-badge.providers';
 import { provideCookieNotification } from './custom/cookie-notification/cookie-notification.providers';
 import { provideSpartacus } from './spartacus/spartacus.providers';
 
@@ -26,5 +27,10 @@ export const appConfig: ApplicationConfig = {
     // ── ここから後にカスタマイズを並べる(後勝ち) ──────────
     // Cookie 通知(Accelerator の JspIncludeComponent からの移植。キーは uid)
     ...provideCookieNotification(),
+
+    // 全CMSコンポーネントに型名バッジを表示する(移行の Gap 分析用)。
+    // ON/OFF: environment.labelCmsComponents、または DevTools Console で
+    //   localStorage.setItem('cx-label-components', 'on'|'off') + リロード
+    ...provideComponentBadges(),
   ],
 };

@@ -90,6 +90,41 @@ src/
     └── custom/                      自作コンポーネント置き場
 ```
 
+## CMS型名バッジ(移行の Gap 分析用)
+
+画面上の全部品に CMS 型名のラベルを表示する仕掛け(`custom/all-components/`)。
+「この部品はどの CMS 型か」を実機で確認でき、差し替え対象の型名を
+レスポンスを読まずに特定できる。
+
+### 仕組み
+
+Spartacus は各CMSコンポーネントを**型名と同名の outlet** で包んで描画する
+(`page-slot.component.html` の `[cxOutlet]="component.flexType"`)。
+よって全228型を `provideOutlet` すれば、個別実装ゼロで全部品に一括で差し込める。
+
+- 未導入ライブラリの型は何も起きない
+- lazy 機能(cart/checkout 等)のコンポーネントにも効く
+- **OCC のレスポンスだけでは見えない「ネストされた子部品」にもバッジが付く**
+
+### ON / OFF の切り替え
+
+**① 既定値**(`src/environments/environment.ts`):
+
+```ts
+labelCmsComponents: true,   // false にすると既定で非表示
+```
+
+**② 実行時に切り替える**(再ビルド不要。DevTools の Console で実行してリロード):
+
+```js
+localStorage.setItem('cx-label-components', 'on');   // 表示
+localStorage.setItem('cx-label-components', 'off');  // 非表示
+localStorage.removeItem('cx-label-components');      // environment の設定に戻す
+```
+
+localStorage の指定が environment より優先される。
+OFF のときは providers 配列自体が空になるので**実行時コストはゼロ**。
+
 ## カスタマイズの足し方
 
 **NgModule を作らずに `app.config.ts` へ直接足せる**のが standalone 版の利点。
