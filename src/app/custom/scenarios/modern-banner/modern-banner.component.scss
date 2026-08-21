@@ -33,9 +33,13 @@
       width: 100%;
     }
 
+    /* 画像の高さは img 自身のアスペクト比で決める。
+       cx-media が高さを持たない構成(styles の読み込み差)でも潰れないよう
+       height:auto を明示し、img をブロック化する */
     ::ng-deep img {
       width: 100%;
-      height: auto;
+      height: auto !important;
+      min-height: 1px;
       display: block;
       transition: transform 0.4s ease;
     }
