@@ -16,6 +16,7 @@ import { OrderRootModule } from '@spartacus/order/root';
 import {
   AnonymousConsentManagementBannerModule,
   AnonymousConsentsDialogModule,
+  AppRoutingModule,
   BannerCarouselModule,
   BannerModule,
   BaseStorefrontModule,
@@ -81,7 +82,14 @@ export const provideSpartacus = (): (Provider | EnvironmentProviders)[] => [
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
 
-    // Spartacus の基盤(ルーティング・レイアウト・CMS解決)
+    // ★ルーティング。Spartacus が CMS 駆動のワイルドカードルートを登録する。
+    //   これが無いと URL が '/' のまま止まり、baseSite/言語/通貨への
+    //   リダイレクト(例: /powertools-spa/en/USD/)が起こらず、
+    //   ページ解決が完了しない(cx-pending のまま)。
+    //   provideRouter() ではなくこの NgModule を使う。
+    AppRoutingModule,
+
+    // Spartacus の基盤(レイアウト・CMS解決)
     BaseStorefrontModule,
 
     // ── eager な機能(常時ロード) ──────────────────────

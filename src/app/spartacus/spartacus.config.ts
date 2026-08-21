@@ -12,6 +12,7 @@ import {
   provideConfig,
   provideConfigFactory,
 } from '@spartacus/core';
+import { LayoutConfig } from '@spartacus/storefront';
 import {
   defaultCmsContentProviders,
   layoutConfigFactory,
@@ -42,6 +43,8 @@ export const spartacusConfig: (Provider | EnvironmentProviders)[] = [
   provideConfig(<SiteContextConfig>{
     context: {
       urlParameters: ['baseSite', 'language', 'currency'],
+      // SPA 用サイト。非SPA サイト(electronics 等)は Composable 向けの
+      // CMS 整備がされておらず、ページ解決が完了しないので使わない。
       baseSite: ['powertools-spa'],
       currency: ['USD'],
       language: ['en'],
@@ -57,6 +60,35 @@ export const spartacusConfig: (Provider | EnvironmentProviders)[] = [
       },
       chunks: translationChunksConfig,
       fallbackLang: 'en',
+    },
+  }),
+
+  // ★ヘッダーのスロット構成を上書きして TopHeaderSlot を追加する。
+  //   標準の layoutSlots.header は
+  //     slots    : ['PreHeader','SiteLogo','SearchBox','MiniCart']
+  //     lg.slots : ['PreHeader','SiteContext','SiteLinks','SiteLogo',
+  //                 'SearchBox','SiteLogin','MiniCart','NavigationBar']
+  //   で、TopHeaderSlot を含まない。CMS が返してきても描画されないため、
+  //   先頭に足したうえで「標準の並びを全部書き直す」必要がある
+  //   (一部だけ書くと他のスロットが消える)。
+  provideConfig(<LayoutConfig>{
+    layoutSlots: {
+      header: {
+        lg: {
+          slots: [
+            'TopHeaderSlot',
+            'PreHeader',
+            'SiteContext',
+            'SiteLinks',
+            'SiteLogo',
+            'SearchBox',
+            'SiteLogin',
+            'MiniCart',
+            'NavigationBar',
+          ],
+        },
+        slots: ['TopHeaderSlot', 'PreHeader', 'SiteLogo', 'SearchBox', 'MiniCart'],
+      },
     },
   }),
 

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
 import { WindowRef } from '@spartacus/core';
 import { CmsComponentData } from '@spartacus/storefront';
 import { CmsCookieNotificationComponent } from './cookie-notification.model';
@@ -21,12 +22,17 @@ const STORAGE_KEY = 'cookie-notice-accepted';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CookieNotificationComponent {
-  private componentData: CmsComponentData<CmsCookieNotificationComponent> =
-    inject(CmsComponentData);
+  // ★ optional: true —— Outlet 経由で差し込まれた場合は CmsComponentData が
+  //   存在しない(CMS コンポーネントとして描画されていないため)。
+  //   CMS 経由なら値が入り、Outlet 経由なら null になる。
+  private componentData = inject<CmsComponentData<CmsCookieNotificationComponent>>(
+    CmsComponentData,
+    { optional: true }
+  );
   private windowRef = inject(WindowRef);
 
-  /** CMS データ(到着前は undefined) */
-  private data = toSignal(this.componentData.data$);
+  /** CMS データ。Outlet 経由なら componentData が null なので undefined を流す */
+  private data = toSignal(this.componentData?.data$ ?? of(undefined));
 
   /** 同意済みかどうか。初期値は localStorage から読む(SSR では常に false) */
   private accepted = signal(this.readAccepted());

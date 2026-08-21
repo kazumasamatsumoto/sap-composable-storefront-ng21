@@ -19,6 +19,36 @@
 **共通点**: `@spartacus/*` のバージョン(221121.15.1)、baseSite(`powertools-spa`)、
 OCC の向き先、スタイルの読み込み順は同じ。
 
+## ★詰まりやすい2点(実機で踏んだ)
+
+### 1. `AppRoutingModule` が必須
+
+`BaseStorefrontModule` だけではルーターが設定されず、**URL が `/` のまま止まる**。
+baseSite/言語/通貨へのリダイレクト(`/powertools-spa/en/USD/`)が起きず、
+ページ解決が `cx-pending` のまま完了しない(画面が白いまま)。
+
+```ts
+importProvidersFrom(
+  AppRoutingModule,        // ← これが無いと動かない。provideRouter() では代替できない
+  BaseStorefrontModule,
+  ...
+)
+```
+
+### 2. NgRx は NgModule 版を使う
+
+`provideStore()` / `provideEffects()` だけだと起動時に
+**`NG0201: No provider found for _EffectsRootModule`** で落ちる。
+Spartacus 内部が `EffectsFeatureModule` を使っているため。
+
+```ts
+importProvidersFrom(
+  StoreModule.forRoot({}),      // provideStore() ではダメ
+  EffectsModule.forRoot([]),    // provideEffects() ではダメ
+  ...
+)
+```
+
 ## なぜ NgModule が完全には消えないのか
 
 `@spartacus/*` のライブラリ自体がまだ NgModule で提供されているため、
