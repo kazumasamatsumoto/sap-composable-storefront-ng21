@@ -4,7 +4,9 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 
+import { environment } from '../environments/environment';
 import { provideComponentBadges } from './custom/all-components/component-badge.providers';
+import { provideScenarios } from './custom/scenarios/scenarios.providers';
 import { provideCookieNotification } from './custom/cookie-notification/cookie-notification.providers';
 import { provideSpartacus } from './spartacus/spartacus.providers';
 
@@ -27,6 +29,10 @@ export const appConfig: ApplicationConfig = {
     // ── ここから後にカスタマイズを並べる(後勝ち) ──────────
     // Cookie 通知(Accelerator の JspIncludeComponent からの移植。キーは uid)
     ...provideCookieNotification(),
+
+    // カスタマイズ3シナリオ(独自部品の追加 / 既存部品の改修 / Outlet で重ねる)。
+    // 個別 ON/OFF は environment.scenarios
+    ...provideScenarios(environment.scenarios),
 
     // 全CMSコンポーネントに型名バッジを表示する(移行の Gap 分析用)。
     // ON/OFF: environment.labelCmsComponents、または DevTools Console で
