@@ -1,6 +1,6 @@
 import { EnvironmentProviders, Provider, importProvidersFrom } from '@angular/core';
-import { provideEffects } from '@ngrx/effects';
-import { provideStore } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
 import { CartBaseRootModule } from '@spartacus/cart/base/root';
 import { CheckoutRootModule } from '@spartacus/checkout/base/root';
 import {
@@ -74,11 +74,13 @@ import { spartacusConfig } from './spartacus.config';
  * 提供するようになれば、そのまま置き換えられる。
  */
 export const provideSpartacus = (): (Provider | EnvironmentProviders)[] => [
-  // NgRx(Spartacus の状態管理が依存している)
-  provideStore({}),
-  provideEffects([]),
-
   importProvidersFrom(
+    // NgRx。Spartacus 内部が EffectsFeatureModule を使うため、
+    // provideStore()/provideEffects() ではなく NgModule 版を読み込む必要がある
+    // (provideEffects だけだと NG0201: No provider found for `_EffectsRootModule`)
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
+
     // Spartacus の基盤(ルーティング・レイアウト・CMS解決)
     BaseStorefrontModule,
 

@@ -4,6 +4,7 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 
+import { provideCookieNotification } from './custom/cookie-notification/cookie-notification.providers';
 import { provideSpartacus } from './spartacus/spartacus.providers';
 
 /**
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
     ...provideSpartacus(),
 
     // ── ここから後にカスタマイズを並べる(後勝ち) ──────────
-    // 例: ...provideCustomBreadcrumb(),
+    // Cookie 通知(Accelerator の JspIncludeComponent からの移植。キーは uid)
+    ...provideCookieNotification(),
   ],
 };

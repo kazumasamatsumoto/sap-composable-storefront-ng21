@@ -1,0 +1,14 @@
+@if (visible()) {
+  <aside class="cookie-notification" role="region" [attr.aria-label]="title()">
+    <div class="text">
+      <strong class="title">{{ title() }}</strong>
+      <span class="message">{{ message() }}</span>
+      @if (linkUrl()) {
+        <a class="detail-link" [href]="linkUrl()">{{ linkLabel() }}</a>
+      }
+    </div>
+    <button type="button" class="btn btn-primary accept" (click)="onAccept()">
+      {{ acceptLabel() }}
+    </button>
+  </aside>
+}
